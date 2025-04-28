@@ -1,20 +1,20 @@
 terraform {
-    required_version = "1.11.2"
+  required_version = "1.11.2"
 
-    required_providers {
-        aws = {
-            source = "hashicorp/aws"
-            version = "5.91.0"
-        }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.91.0"
     }
+  }
 }
 
 provider "aws" {
-    region = "ap-northeast-1"
-    allowed_account_ids = ["058264064240"] #あなたの発行したAWSアカウントのIDを入力してください
-    default_tags {
-        tags = {
-            TerraformName = "CTOA-aws-handsON"
-        }
+  region              = "ap-northeast-1"
+  allowed_account_ids = ["058264064240"] #あなたの発行したAWSアカウントのIDを入力してください
+  default_tags {
+    tags = {
+      TerraformName = "CTOA-aws-handsON"
     }
+  }
 }
