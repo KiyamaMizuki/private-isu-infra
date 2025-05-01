@@ -19,7 +19,6 @@ resource "aws_rds_cluster" "default" {
   monitoring_role_arn                   = "arn:aws:iam::058264064240:role/rds-monitoring-role"
   network_type                          = "IPV4"
   performance_insights_enabled          = true
-  #performance_insights_kms_key_id       = "arn:aws:kms:ap-northeast-1:058264064240:key/c9ceeaf2-dc85-42a0-90b0-824207bd9e71"
   performance_insights_retention_period = 465
   port                                  = 3306
   storage_type                          = "aurora-iopt1"
@@ -42,7 +41,6 @@ resource "aws_rds_cluster_instance" "default" {
   monitoring_interval                   = 60
   monitoring_role_arn                   = aws_iam_role.rds_monitoring_role.arn
   performance_insights_enabled          = true
-  #performance_insights_kms_key_id       = "arn:aws:kms:ap-northeast-1:058264064240:key/c9ceeaf2-dc85-42a0-90b0-824207bd9e71"
   performance_insights_retention_period = 465
   tags = {
     devops-guru-default = "private-isu-aurora"
@@ -54,14 +52,15 @@ resource "aws_rds_cluster_instance" "default" {
 }
 
 
-resource "aws_db_subnet_group" "default" {
+resource "aws_db_subnet_group" "aurora" {
   name       = "private-isu-mysql-subnet-group"
   subnet_ids = [aws_subnet.mysql-a.id,aws_subnet.mysql-c.id]
 
   tags = {
-    Name = "private-isu aurora instance"
+    Name = "private-isu aurora subnet group"
   }
 }
+
 resource "aws_subnet" "mysql-a" {
     vpc_id = aws_vpc.vpc.id
 
