@@ -16,7 +16,7 @@ resource "aws_rds_cluster" "default" {
   master_password                       = var.db_password # sensitive
   master_username                       = "isuconp"
   monitoring_interval                   = 60
-  monitoring_role_arn                   = "arn:aws:iam::058264064240:role/rds-monitoring-role"
+  monitoring_role_arn                   = aws_iam_role.rds_monitoring_role.arn
   network_type                          = "IPV4"
   performance_insights_enabled          = true
   performance_insights_retention_period = 465
