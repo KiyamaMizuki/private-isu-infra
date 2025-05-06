@@ -5,7 +5,7 @@ resource "aws_rds_cluster" "default" {
   database_insights_mode                = "advanced"
   database_name                         = "isuconp"
   db_cluster_parameter_group_name       = "default.aurora-mysql8.0"
-  db_subnet_group_name                  = "private-isu-mysql-subnet-group"
+  db_subnet_group_name                  = aws_db_subnet_group.aurora.name
   delete_automated_backups              = false
   deletion_protection                   = false
   enabled_cloudwatch_logs_exports       = ["slowquery"]
@@ -33,7 +33,7 @@ resource "aws_rds_cluster_instance" "default" {
   ca_cert_identifier                    = "rds-ca-rsa2048-g1"
   cluster_identifier                    = "private-isu-db"
   db_parameter_group_name               = "default.aurora-mysql8.0"
-  db_subnet_group_name                  = "private-isu-mysql-subnet-group"
+  db_subnet_group_name                  = aws_db_subnet_group.aurora.name
   engine                                = "aurora-mysql"
   engine_version                        = "8.0.mysql_aurora.3.05.2"
   identifier                            = "private-isu-aurora-instance"
@@ -82,7 +82,7 @@ resource "aws_security_group" "aurora" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = [aws_security_group.public.id]
+    security_groups = [aws_security_group.web.id]
   }
 }
 
