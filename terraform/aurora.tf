@@ -16,7 +16,7 @@ resource "aws_rds_cluster" "default" {
   master_password                       = var.db_password # sensitive
   master_username                       = "isuconp"
   monitoring_interval                   = 60
-  monitoring_role_arn                   = aws_iam_role.rds_monitoring_role.arn
+  monitoring_role_arn                   = aws_iam_role.private_isu_rds_monitoring_role.arn
   network_type                          = "IPV4"
   performance_insights_enabled          = true
   performance_insights_retention_period = 465
@@ -39,7 +39,7 @@ resource "aws_rds_cluster_instance" "default" {
   identifier                            = "private-isu-aurora-instance"
   instance_class                        = "db.r5.large"
   monitoring_interval                   = 60
-  monitoring_role_arn                   = aws_iam_role.rds_monitoring_role.arn
+  monitoring_role_arn                   = aws_iam_role.private_isu_rds_monitoring_role.arn
   performance_insights_enabled          = true
   performance_insights_retention_period = 465
   tags = {
@@ -90,7 +90,7 @@ data "aws_iam_policy" "enhanced_monitoring" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
-resource "aws_iam_role" "rds_monitoring_role" {
+resource "aws_iam_role" "private_isu_rds_monitoring_role" {
   name = "rds-monitoring-role" # 任意のロール名を指定してください
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -125,6 +125,6 @@ resource "aws_iam_role" "rds_monitoring_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "enhanced_monitoring_attachment" {
-  role       = aws_iam_role.rds_monitoring_role.name
+  role       = aws_iam_role.private_isu_rds_monitoring_role.name
   policy_arn = data.aws_iam_policy.enhanced_monitoring.arn
 }
