@@ -91,7 +91,7 @@ data "aws_iam_policy" "enhanced_monitoring" {
 }
 
 resource "aws_iam_role" "private_isu_rds_monitoring_role" {
-  name = "rds-monitoring-role" # 任意のロール名を指定してください
+  name = "private-isu-rds-monitoring-role" 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
