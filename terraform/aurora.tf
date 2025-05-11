@@ -1,7 +1,6 @@
 resource "aws_rds_cluster" "default" {
   availability_zones                    = ["ap-northeast-1a", "ap-northeast-1c"]
   cluster_identifier                    = "private-isu-db"
-  cluster_members                       = ["private-isu-aurora-instance"]
   database_insights_mode                = "advanced"
   database_name                         = "isuconp"
   db_cluster_parameter_group_name       = "default.aurora-mysql8.0"
@@ -22,15 +21,12 @@ resource "aws_rds_cluster" "default" {
   performance_insights_retention_period = 465
   port                                  = 3306
   storage_type                          = "aurora-iopt1"
-  final_snapshot_identifier             = "test"
   skip_final_snapshot                   = true
   vpc_security_group_ids                = [aws_security_group.aurora.id]
 }
 
 
 resource "aws_rds_cluster_instance" "default" {
-  availability_zone                     = "ap-northeast-1a"
-  ca_cert_identifier                    = "rds-ca-rsa2048-g1"
   cluster_identifier                    = "private-isu-db"
   db_parameter_group_name               = "default.aurora-mysql8.0"
   db_subnet_group_name                  = aws_db_subnet_group.aurora.name
@@ -45,16 +41,13 @@ resource "aws_rds_cluster_instance" "default" {
   tags = {
     devops-guru-default = "private-isu-aurora"
   }
-  tags_all = {
-    devops-guru-default = "private-isu-aurora"
-  }
   depends_on = [aws_rds_cluster.default]
 }
 
 
 resource "aws_db_subnet_group" "aurora" {
   name       = "private-isu-mysql-subnet-group"
-  subnet_ids = [aws_subnet.mysql-a.id,aws_subnet.mysql-c.id]
+  subnet_ids = [aws_subnet.mysql-a.id, aws_subnet.mysql-c.id]
 
   tags = {
     Name = "private-isu aurora subnet group"
@@ -62,17 +55,17 @@ resource "aws_db_subnet_group" "aurora" {
 }
 
 resource "aws_subnet" "mysql-a" {
-    vpc_id = aws_vpc.vpc.id
+  vpc_id = aws_vpc.vpc.id
 
-    availability_zone = "ap-northeast-1a"
-    cidr_block = "10.10.9.0/24"
+  availability_zone = "ap-northeast-1a"
+  cidr_block        = "10.10.9.0/24"
 }
 
 resource "aws_subnet" "mysql-c" {
-    vpc_id = aws_vpc.vpc.id
+  vpc_id = aws_vpc.vpc.id
 
-    availability_zone = "ap-northeast-1c"
-    cidr_block = "10.10.11.0/24"
+  availability_zone = "ap-northeast-1c"
+  cidr_block        = "10.10.11.0/24"
 }
 
 resource "aws_security_group" "aurora" {
@@ -91,7 +84,7 @@ data "aws_iam_policy" "enhanced_monitoring" {
 }
 
 resource "aws_iam_role" "private_isu_rds_monitoring_role" {
-  name = "private-isu-rds-monitoring-role" 
+  name = "private-isu-rds-monitoring-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
