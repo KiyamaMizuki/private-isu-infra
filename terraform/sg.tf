@@ -69,7 +69,7 @@ resource "aws_security_group" "isucon_memcached_sg" {
   ingress {
     from_port       = 11211
     to_port         = 11211
-    protocol        = "http"
+    protocol        = "tcp"
     security_groups = [aws_security_group.web.id]
   }
 }
