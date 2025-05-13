@@ -1,6 +1,6 @@
 resource "aws_instance" "web" {
   ami                         = "ami-0505850c059a7302e" #Private-isu-AMI
-  instance_type               = "c7g.large"
+  instance_type               = "c7a.large"
   iam_instance_profile        = aws_iam_instance_profile.example_profile.name
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.web.id]
@@ -16,8 +16,8 @@ resource "aws_instance" "web" {
 }
 
 resource "aws_instance" "benchmark" {
-  ami                         = "ami-0505850c059a7302e" #Private-isu-benchmark-AMI
-  instance_type               = "c7g.large"
+  ami                         = "ami-0505850c059a7302e" #Private-isu-AMI
+  instance_type               = "c7a.xlarge"
   iam_instance_profile        = aws_iam_instance_profile.example_profile.name
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.benchmark.id]
