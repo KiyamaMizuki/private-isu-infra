@@ -61,3 +61,15 @@ resource "aws_security_group" "benchmark" {
     ipv6_cidr_blocks = ["::/0"]
   }
 }
+
+#memcached用サブネット
+resource "aws_security_group" "isucon_memcached_sg" {
+  name   = "isucon_memcached_sg"
+  vpc_id = aws_vpc.vpc.id
+  ingress {
+    from_port       = 11211
+    to_port         = 11211
+    protocol        = "tcp"
+    security_groups = [aws_security_group.web.id]
+  }
+}
