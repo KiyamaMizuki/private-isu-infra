@@ -53,3 +53,11 @@ resource "aws_route_table_association" "c" {
 }
 
 # ベンチマーク用サブネット環境
+
+# memcached用サブネット
+resource "aws_subnet" "cache_subnet" {
+  vpc_id = aws_vpc.vpc.id
+
+  availability_zone = "ap-northeast-1c"
+  cidr_block        = "10.10.5.0/24"
+}
