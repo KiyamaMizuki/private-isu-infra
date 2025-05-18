@@ -1,7 +1,7 @@
 resource "aws_cloudfront_vpc_origin" "alb" {
   vpc_origin_endpoint_config {
     name                   = "alb-origin"
-    arn                    = aws_lb.web.arn
+    arn                    = aws_lb.private_isu_alb.arn
     http_port              = 80
     https_port             = 443
     origin_protocol_policy = "http-only"
@@ -15,7 +15,7 @@ resource "aws_cloudfront_vpc_origin" "alb" {
 
 resource "aws_cloudfront_distribution" "alb" {
   origin {
-    domain_name = aws_lb.web.dns_name
+    domain_name = aws_lb.private_isu_alb.dns_name
     origin_id   = "alb-origin"
     vpc_origin_config {
       vpc_origin_id = aws_cloudfront_vpc_origin.alb.id

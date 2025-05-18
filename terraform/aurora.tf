@@ -1,10 +1,10 @@
-resource "aws_rds_cluster" "default" {
+resource "aws_rds_cluster" "private_isu_db" {
   availability_zones                    = ["ap-northeast-1a", "ap-northeast-1c"]
   cluster_identifier                    = "private-isu-db"
   database_insights_mode                = "advanced"
   database_name                         = "isuconp"
   db_cluster_parameter_group_name       = "default.aurora-mysql8.0"
-  db_subnet_group_name                  = aws_db_subnet_group.aurora.name
+  db_subnet_group_name                  = aws_db_subnet_group.private_isu_aurora.name
   delete_automated_backups              = false
   deletion_protection                   = false
   enabled_cloudwatch_logs_exports       = ["slowquery"]
@@ -22,14 +22,14 @@ resource "aws_rds_cluster" "default" {
   port                                  = 3306
   storage_type                          = "aurora-iopt1"
   skip_final_snapshot                   = true
-  vpc_security_group_ids                = [aws_security_group.aurora.id]
+  vpc_security_group_ids                = [aws_security_group.private_isu_aurora.id]
 }
 
 
-resource "aws_rds_cluster_instance" "default" {
+resource "aws_rds_cluster_instance" "private_isu_db_instance" {
   cluster_identifier                    = "private-isu-db"
   db_parameter_group_name               = "default.aurora-mysql8.0"
-  db_subnet_group_name                  = aws_db_subnet_group.aurora.name
+  db_subnet_group_name                  = aws_db_subnet_group.private_isu_aurora.name
   engine                                = "aurora-mysql"
   engine_version                        = "8.0.mysql_aurora.3.05.2"
   identifier                            = "private-isu-aurora-instance"
@@ -41,11 +41,11 @@ resource "aws_rds_cluster_instance" "default" {
   tags = {
     devops-guru-default = "private-isu-aurora"
   }
-  depends_on = [aws_rds_cluster.default]
+  depends_on = [aws_rds_cluster.private_isu_db]
 }
 
 
-resource "aws_db_subnet_group" "aurora" {
+resource "aws_db_subnet_group" "private_isu_aurora" {
   name       = "private-isu-mysql-subnet-group"
   subnet_ids = [aws_subnet.mysql-a.id, aws_subnet.mysql-c.id]
 
@@ -68,14 +68,14 @@ resource "aws_subnet" "mysql-c" {
   cidr_block        = "10.10.11.0/24"
 }
 
-resource "aws_security_group" "aurora" {
+resource "aws_security_group" "private_isu_aurora" {
   name   = "Private-isu-aurora"
   vpc_id = aws_vpc.vpc.id
   ingress {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = [aws_security_group.web.id]
+    security_groups = [aws_security_group.private_isu_web.id]
   }
 }
 
