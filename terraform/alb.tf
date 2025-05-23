@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 data "aws_elb_service_account" "tf_elb_service_account" {}
 
-resource "aws_lb" "web" {
+resource "aws_lb" "private_isu_alb" {
   name               = "Private-isu-alb"
   internal           = false
   load_balancer_type = "application"
@@ -15,7 +15,7 @@ resource "aws_lb" "web" {
   }
 }
 
-resource "aws_lb_target_group" "web" {
+resource "aws_lb_target_group" "private_isu" {
   name     = "Private-isu"
   port     = 80
   protocol = "HTTP"
@@ -31,29 +31,29 @@ resource "aws_lb_target_group" "web" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "web" {
-  target_group_arn = aws_lb_target_group.web.arn
-  target_id        = aws_instance.web.id
+resource "aws_lb_target_group_attachment" "private_isu" {
+  target_group_arn = aws_lb_target_group.private_isu.arn
+  target_id        = web.id
 }
 
-resource "aws_lb_listener" "web" {
-  load_balancer_arn = aws_lb.web.arn
+resource "aws_lb_listener" "private_isu" {
+  load_balancer_arn = aws_lb.private_isu_alb.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.web.arn
+    target_group_arn = aws_lb_target_group.private_isu.arn
   }
 }
 
-resource "aws_lb_listener_rule" "web" {
-  listener_arn = aws_lb_listener.web.arn
+resource "aws_lb_listener_rule" "private_isu" {
+  listener_arn = aws_lb_listener.private_isu.arn
   priority     = 100
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.web.arn
+    target_group_arn = aws_lb_target_group.private_isu.arn
   }
 
   condition {

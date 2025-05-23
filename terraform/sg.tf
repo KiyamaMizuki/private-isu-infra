@@ -30,7 +30,7 @@ resource "aws_vpc_security_group_ingress_rule" "alb" {
   referenced_security_group_id = data.aws_security_group.vpc_origin_sg.id
 }
 
-resource "aws_security_group" "web" {
+resource "aws_security_group" "private_isu_web" {
   name   = "Private-isu"
   vpc_id = aws_vpc.vpc.id
   ingress {
@@ -70,6 +70,6 @@ resource "aws_security_group" "isucon_memcached_sg" {
     from_port       = 11211
     to_port         = 11211
     protocol        = "tcp"
-    security_groups = [aws_security_group.web.id]
+    security_groups = [aws_security_group.private_isu_web.id]
   }
 }
