@@ -1,5 +1,5 @@
 resource "aws_rds_cluster" "private_isu_db" {
-  availability_zones                    = ["ap-northeast-1a", "ap-northeast-1c"]
+  availability_zones                    = ["us-east-1a", "us-east-1c", "us-east-1d"]
   cluster_identifier                    = "private-isu-db"
   database_insights_mode                = "advanced"
   database_name                         = "isuconp"
@@ -12,7 +12,7 @@ resource "aws_rds_cluster" "private_isu_db" {
   engine_lifecycle_support              = "open-source-rds-extended-support-disabled"
   engine_mode                           = "provisioned"
   engine_version                        = "8.0.mysql_aurora.3.05.2"
-  master_password                       = var.db_password # sensitive
+  master_password                       = "password" # NOTE: 本来はパスワードを別で管理する
   master_username                       = "isuconp"
   monitoring_interval                   = 60
   monitoring_role_arn                   = aws_iam_role.private_isu_rds_monitoring_role.arn
@@ -24,7 +24,6 @@ resource "aws_rds_cluster" "private_isu_db" {
   skip_final_snapshot                   = true
   vpc_security_group_ids                = [aws_security_group.private_isu_aurora.id]
 }
-
 
 resource "aws_rds_cluster_instance" "private_isu_db_instance" {
   cluster_identifier                    = "private-isu-db"
@@ -42,82 +41,4 @@ resource "aws_rds_cluster_instance" "private_isu_db_instance" {
     devops-guru-default = "private-isu-aurora"
   }
   depends_on = [aws_rds_cluster.private_isu_db]
-}
-
-
-resource "aws_db_subnet_group" "private_isu_aurora" {
-  name       = "private-isu-mysql-subnet-group"
-  subnet_ids = [aws_subnet.mysql-a.id, aws_subnet.mysql-c.id]
-
-  tags = {
-    Name = "private-isu aurora subnet group"
-  }
-}
-
-resource "aws_subnet" "mysql-a" {
-  vpc_id = aws_vpc.vpc.id
-
-  availability_zone = "ap-northeast-1a"
-  cidr_block        = "10.10.9.0/24"
-}
-
-resource "aws_subnet" "mysql-c" {
-  vpc_id = aws_vpc.vpc.id
-
-  availability_zone = "ap-northeast-1c"
-  cidr_block        = "10.10.11.0/24"
-}
-
-resource "aws_security_group" "private_isu_aurora" {
-  name   = "Private-isu-aurora"
-  vpc_id = aws_vpc.vpc.id
-  ingress {
-    from_port       = 3306
-    to_port         = 3306
-    protocol        = "tcp"
-    security_groups = [aws_security_group.private_isu_web.id]
-  }
-}
-
-data "aws_iam_policy" "enhanced_monitoring" {
-  arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
-}
-
-resource "aws_iam_role" "private_isu_rds_monitoring_role" {
-  name = "private-isu-rds-monitoring-role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "rds.amazonaws.com"
-        }
-      },
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "monitoring.rds.amazonaws.com"
-        }
-      },
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com" # Aurora クラスターのホストインスタンスが EC2 コンポーネントを持つため
-        }
-      },
-    ]
-  })
-
-  tags = {
-    Name = "private-isu RDS Monitoring Role"
-  }
-}
-
-resource "aws_iam_role_policy_attachment" "enhanced_monitoring_attachment" {
-  role       = aws_iam_role.private_isu_rds_monitoring_role.name
-  policy_arn = data.aws_iam_policy.enhanced_monitoring.arn
 }

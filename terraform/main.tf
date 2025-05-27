@@ -1,6 +1,4 @@
 terraform {
-  required_version = "1.11.2"
-
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -10,8 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region              = "ap-northeast-1"
-  allowed_account_ids = [""] #あなたの発行したAWSアカウントのIDを入力してください
+  region = "us-east-1"
   default_tags {
     tags = {
       TerraformName = "CTOA-aws-handsON"
